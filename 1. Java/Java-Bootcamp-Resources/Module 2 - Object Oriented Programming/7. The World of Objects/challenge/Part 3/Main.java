@@ -33,6 +33,15 @@ public class Main {
         while (status.equals("continue")) {
             System.out.print("To edit another rating, type: 'continue': ");
             status = scanner.next();
+            System.out.print("\nPlease choose an integer between 0 - 9: ");
+            int num = scanner.nextInt();
+            Movie movie = store.getMovie(num);
+            System.out.print("Set a new rating for " + movie.getName() + ": ");
+            double n = scanner.nextDouble();
+            movie.setRating(n);
+            store.setMovie(num, movie);
+    printStore();
+            // grab nextDouble()
         }
         scanner.close();
     }

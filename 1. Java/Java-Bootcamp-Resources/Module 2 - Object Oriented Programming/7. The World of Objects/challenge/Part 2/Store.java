@@ -1,18 +1,23 @@
+import java.util.Arrays;
+
 public class Store {
 
     private Movie[] movies;
 
     public Store() {
-        // TODO
+        this.movies = new Movie[10];
+        
     }
 
     public Movie getMovie(int index) {
-        // TODO 
-        return null;
+       
+        Movie[] copy = Arrays.copyOf(movies,movies.length);
+        return copy[index];
     }
 
     public void setMovie(int index, Movie movie) {
-        // TODO 
+        
+        this.movies[index] = movie;
     }
 
 

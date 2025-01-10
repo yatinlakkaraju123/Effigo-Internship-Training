@@ -21,6 +21,7 @@ public class Movie {
     }
 
     public void setName(String name) {
+        if(name==null || name.equals("")) throw new IllegalArgumentException();
         // TODO
         this.name = name;
     }
@@ -30,6 +31,7 @@ public class Movie {
     }
 
     public void setFormat(String format) {
+        if(name==null || name.equals("")) throw new IllegalArgumentException();
         // TODO
         this.format = format;
     }
@@ -39,6 +41,7 @@ public class Movie {
     }
 
     public void setRating(double rating) {
+        if(rating<0 || rating>10) throw new IllegalArgumentException();
         // TODO
         this.rating = rating;
     }
