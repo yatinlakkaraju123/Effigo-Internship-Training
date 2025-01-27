@@ -1,0 +1,8 @@
+com\myprojects\OnetoOne\Profile\Services\ProfileServices.class
+com\myprojects\OnetoOne\User\Model\User.class
+com\myprojects\OnetoOne\User\Services\UserService.class
+com\myprojects\OnetoOne\Profile\Model\Profile.class
+com\myprojects\OnetoOne\User\Controller\UserController.class
+com\myprojects\OnetoOne\Profile\Repository\ProfileRepository.class
+com\myprojects\OnetoOne\Profile\Controller\ProfileController.class
+com\myprojects\OnetoOne\User\Repository\UserRepository.class
