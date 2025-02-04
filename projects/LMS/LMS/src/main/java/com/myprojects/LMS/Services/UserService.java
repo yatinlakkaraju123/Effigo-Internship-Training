@@ -1,16 +1,17 @@
 package com.myprojects.LMS.Services;
 
 import com.myprojects.LMS.DTOs.UserDTO;
+import com.myprojects.LMS.Entities.Authority;
 import com.myprojects.LMS.Entities.Books;
 import com.myprojects.LMS.Entities.User;
 import com.myprojects.LMS.Mappers.UserMapper;
-import com.myprojects.LMS.Repositories.BooksRepository;
-import com.myprojects.LMS.Repositories.BorrowRepository;
-import com.myprojects.LMS.Repositories.CommentsRepository;
-import com.myprojects.LMS.Repositories.UserRepository;
+import com.myprojects.LMS.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,11 @@ public class UserService {
     private BorrowRepository borrowRepository;
     @Autowired
     private CommentsRepository commentsRepository;
+    @Autowired
+    private AuthorityRepository authorityRepository;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public ResponseEntity<List<UserDTO>> retrieveAllUsers() {
         try {
             List<User> users = userRepository.findAll();
@@ -42,12 +48,26 @@ public class UserService {
     }
 
     public ResponseEntity<String> insertUser(UserDTO userDto) {
-        try {
+        try {   if (userRepository.existsByUsername(userDto.getUsername())) {
+            return ResponseEntity.badRequest().body("Username already exists"); // 400 Bad Request
+        }
+            Authority roleUser = authorityRepository.findByAuthority("USER")
+                    .orElseGet(() -> {
+                        Authority newRole = new Authority();
+                        newRole.setAuthority("USER");
+                        return authorityRepository.save(newRole);
+                    });
+
             User user = userMapper.userDTOToUser(userDto);
+            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+            user.setEnabled(true);
+            user.getAuthorities().add(roleUser);
+
             userRepository.save(user);
             return new ResponseEntity<>("user inserted", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -58,8 +78,8 @@ public class UserService {
             if (getUser.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } else {
-                getUser.get().setName(user.getName());
-                getUser.get().setRole(user.getRole());
+                getUser.get().setUsername(user.getUsername());
+                //getUser.get().setRole(user.getRole());
                 userRepository.save(getUser.get());
                 UserDTO userDTO1 = userMapper.userToUserDTO(userRepository.findById(id).get());
                 return new ResponseEntity<>(userDTO1, HttpStatus.OK);
@@ -75,10 +95,14 @@ public class UserService {
             if (getUser.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } else {
+                User user = getUser.get();
+                user.getAuthorities().clear();
+                //userRepository.save(user);
                 List<Books> books = getUser.get().getBooks();
                 for(Books book:books){
                     book.getUsers().remove(getUser.get());
                 }
+                authorityRepository.deleteAllByUser(id);
                 borrowRepository.deleteAllByUser(id);
                 commentsRepository.deleteAllByUser(id);
                 userRepository.delete(getUser.get());

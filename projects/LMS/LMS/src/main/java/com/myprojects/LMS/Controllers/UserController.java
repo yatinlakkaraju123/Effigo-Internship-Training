@@ -23,8 +23,9 @@ public class UserController {
         ResponseEntity<List<UserDTO>> users = userService.retrieveAllUsers();
         return users;
     }
-    @PostMapping("/insertUsers")
+    @PostMapping("/register")
     public ResponseEntity<String> insertUser(@RequestBody UserDTO userDTO){
+
         return userService.insertUser(userDTO);
     }
     @PutMapping("update/users/{id}")
