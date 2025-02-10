@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-
+@RequestMapping("/api")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -23,6 +23,14 @@ public class UserController {
         ResponseEntity<List<UserDTO>> users = userService.retrieveAllUsers();
         return users;
     }
+    @GetMapping("/getUser/{id}")
+    public ResponseEntity<UserDTO> retrieveUserById(@PathVariable int id){
+        return userService.retrieveUserById(id);
+    }
+//    @GetMapping("/getUser/{username}")
+//    public ResponseEntity<Integer> retrieveIdByUsername(@PathVariable String username){
+//
+//    }
     @PostMapping("/register")
     public ResponseEntity<String> insertUser(@RequestBody UserDTO userDTO){
 

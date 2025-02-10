@@ -6,7 +6,7 @@ export const executeJWTAuthenticationService = (username,password)=>
     })
 
     export const registerUser = (username,password)=>{
-        return apiClient.post('/register',{
+        return apiClient.post('/api/register',{
             username,password
         })
     }

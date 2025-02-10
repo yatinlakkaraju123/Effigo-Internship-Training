@@ -1,9 +1,10 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import Header from '../fragments/Header'
 import { Link } from 'react-router';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { executeJWTAuthenticationService } from '../api/AuthenticationApiService';
+import LoginNavbar from '../navbars/LoginNavbar';
 
 function LoginPage() {
     const containerStyle = {
@@ -18,20 +19,29 @@ function LoginPage() {
 
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const auth = useAuth()
+    useEffect(()=>{
+        if(auth.isAuthenticated){
+          if(auth.role==='USER')
+            navigate('/userHome')
+          else if(auth.role==='ADMIN')
+            navigate('/adminHome')
+        }
+    },[auth.isAuthenticated,auth.role,navigate])
     const submit = async (e)=>{
             e.preventDefault();
             
             
             if(await auth.login(username,password))
             {   
-                navigate('/')
-                //alert("correct credentials")
+               setShowErrorMessage(false)
             }
             else{
               setShowErrorMessage(true)
             }
     }
   return (
+    <>
+    <LoginNavbar/>
     <div className='container' style={containerStyle}>
       
       <form>
@@ -56,6 +66,7 @@ function LoginPage() {
 
 </form>
     </div>
+    </>
   )
 }
 

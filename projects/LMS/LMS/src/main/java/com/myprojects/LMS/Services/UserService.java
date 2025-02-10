@@ -6,6 +6,8 @@ import com.myprojects.LMS.Entities.Books;
 import com.myprojects.LMS.Entities.User;
 import com.myprojects.LMS.Mappers.UserMapper;
 import com.myprojects.LMS.Repositories.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+    Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -46,6 +49,21 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    public ResponseEntity<UserDTO> retrieveUserById(int id){
+        try
+        {
+            Optional<User> user = userRepository.findById(id);
+            if(user.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else{
+                UserDTO userDTO = userMapper.userToUserDTO(user.get());
+                return new ResponseEntity<>(userDTO,HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     public ResponseEntity<String> insertUser(UserDTO userDto) {
         try {   if (userRepository.existsByUsername(userDto.getUsername())) {
@@ -59,6 +77,7 @@ public class UserService {
                     });
 
             User user = userMapper.userDTOToUser(userDto);
+            logger.info("user is:"+user.toString());
             String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
             user.setPassword(encodedPassword);
             user.setEnabled(true);

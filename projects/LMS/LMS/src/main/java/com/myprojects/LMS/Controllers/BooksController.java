@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("api")
 public class BooksController {
     @Autowired
     private BooksServices booksServices;
@@ -17,6 +18,10 @@ public class BooksController {
     @GetMapping("/getBooks")
     public ResponseEntity<List<BooksDTO>> retrieveAllBooks(){
         return booksServices.retrieveAllBooks();
+    }
+    @GetMapping("/getBook/{id}")
+    public ResponseEntity<BooksDTO> retrieveBookById(@PathVariable int id){
+            return booksServices.retrieveBookById(id);
     }
     @PostMapping("/insertBooks")
     public ResponseEntity<String> insertBook(@RequestBody BooksDTO booksDTO){

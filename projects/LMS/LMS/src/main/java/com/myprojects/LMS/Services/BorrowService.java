@@ -46,10 +46,21 @@ public class BorrowService {
             Optional<User> user =  userRepository.findById(uid);
             Optional<Books> book = booksRepository.findById(bid);
             Borrow borrow = borrowMapper.borrowDTOToBorrow(borrowDTO);
-            if(user.isEmpty() || book.isEmpty()){
+
+            if(user.isEmpty() || book.isEmpty() ){
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            List<Books> userBooks = user.get().getBooks();
+
+            if(userBooks.contains(book.get())){
+                    return ResponseEntity.badRequest().body("cannot borrow as book is already present");
+                }
+            else if(book.get().getAvailableQuantity()<=0){
+                return ResponseEntity.badRequest().body("cannot borrow book as it is not available");
+            }
             else{
+                int availableQuantity = book.get().getAvailableQuantity();
+                book.get().setAvailableQuantity(availableQuantity-1);
                 borrow.setBook(book.get());
                 borrow.setUser(user.get());
                 book.get().getUsers().add(user.get());
@@ -79,6 +90,8 @@ public class BorrowService {
                 Books book = getBorrow.get().getBook();
                 User user = getBorrow.get().getUser();
                 book.getUsers().remove(user);
+                int availableQuantity = book.getAvailableQuantity();
+                book.setAvailableQuantity(availableQuantity+1);
                 booksRepository.save(book);
                 user.getBooks().remove(book);
                 userRepository.save(user);

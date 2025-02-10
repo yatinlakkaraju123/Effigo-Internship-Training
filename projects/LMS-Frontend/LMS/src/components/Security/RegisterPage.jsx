@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { registerUser } from '../api/AuthenticationApiService';
 import { useNavigate } from 'react-router-dom';
-
+import Header from "../fragments/Header"
 function RegisterPage() {
     const containerStyle = {
         height: '100%',
@@ -16,9 +16,14 @@ function RegisterPage() {
       const navigate = useNavigate()
       const submit = async(e)=>{
         e.preventDefault();
+        
         if(password===repeatPassword)
-        { try {
+        { 
+          try {
+            alert("button pressed")
           const response = await registerUser(username,password)
+          
+          console.log(response)
           if(response.status==200){
               navigate('/login')
           }
@@ -27,6 +32,9 @@ function RegisterPage() {
           //console.log(error)
           if(error.status==400){
             alert("user already exists")
+          }
+          else{
+            console.log(error)
           }
         }
             
@@ -39,6 +47,7 @@ function RegisterPage() {
       }
   return (
     <div>
+      <Header/>
       <div className='container' style={containerStyle}>
       <form>
   <div class="mb-3">

@@ -38,10 +38,26 @@ public class BooksServices {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    public ResponseEntity<BooksDTO> retrieveBookById(int id){
+        try
+        {
+            Optional<Books> book = booksRepository.findById(id);
+            if(book.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else{
+                BooksDTO booksDTO =booksMapper.booksToBooksDTO(book.get());
+                return new ResponseEntity<>(booksDTO,HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     public ResponseEntity<String> insertBooks(BooksDTO booksDTO) {
         try {
             Books book = booksMapper.booksDTOTobooks(booksDTO);
+            book.setAvailableQuantity(book.getTotalQuantity());
             booksRepository.save(book);
             return new ResponseEntity<>("book inserted", HttpStatus.OK);
         } catch (Exception e) {
@@ -73,6 +89,7 @@ public class BooksServices {
     public ResponseEntity<String> deleteBook(int id){
         try {
             Optional<Books> getBooks = booksRepository.findById(id);
+
             if (getBooks.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } else {
