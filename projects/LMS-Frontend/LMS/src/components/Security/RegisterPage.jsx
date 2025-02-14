@@ -20,7 +20,6 @@ function RegisterPage() {
         if(password===repeatPassword)
         { 
           try {
-            alert("button pressed")
           const response = await registerUser(username,password)
           
           console.log(response)
