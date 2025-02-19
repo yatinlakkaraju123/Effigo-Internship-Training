@@ -104,6 +104,7 @@ public class ExpenseServices {
                 if(requestedExpense.getDate()!=null)expense.get().setDate(requestedExpense.getDate());
                 if(requestedExpense.getDescription()!=null)expense.get().setDescription(requestedExpense.getDescription());
                 if(requestedExpense.getPrice()!=0)expense.get().setPrice(requestedExpense.getPrice());
+                expenseRepository.save(expense.get());
                 return new ResponseEntity<>(expenseMappers
                         .ExpensesToExpenseResponse(expense.get()),HttpStatus.ACCEPTED);
             }

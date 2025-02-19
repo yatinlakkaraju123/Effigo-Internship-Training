@@ -18,4 +18,9 @@ public class Category {
     @OneToMany(mappedBy = "category")
     @JsonIgnore
     private List<Expenses> expensesList = new ArrayList<>();
+    @ManyToOne
+    @JsonIgnore
+    private Users user;
+
+
 }

@@ -1,0 +1,23 @@
+body {
+    background: linear-gradient(to right, #eef2f3, #ffffff);
+    min-height: 100vh;
+  }
+  
+  h2 {
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .card {
+    border-radius: 12px;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-sm {
+    width: 80px;
+  }
+  

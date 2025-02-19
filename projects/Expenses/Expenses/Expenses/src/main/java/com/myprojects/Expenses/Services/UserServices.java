@@ -142,6 +142,11 @@ public class UserServices {
                expense.setCategory(null);
                expenseRepository.delete(expense);
            }
+           List<Category> userCategories = user.get().getCategories();
+           for(Category category:userCategories){
+               category.setUser(null);
+
+           }
             userRepository.delete(user.get());
             return new ResponseEntity<>("user deleted",HttpStatus.OK);
         } catch (Exception e) {

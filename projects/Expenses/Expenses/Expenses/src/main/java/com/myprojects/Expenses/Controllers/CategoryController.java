@@ -26,9 +26,14 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDTO> retrieveCategoryById(@PathVariable long id){
         return categoryServices.retrieveCategoryById(id);
     }
-    @PostMapping("create")
-    public ResponseEntity<String> createCategory(@RequestBody CategoryRequestDTO categoryRequestDTO){
-        return categoryServices.createCategory(categoryRequestDTO);
+    @GetMapping("retrieveAll/user/{uid}")
+    public ResponseEntity<List<CategoryResponseDTO>> retrieveAllCategoriesByUser(@PathVariable long uid){
+        return categoryServices.retrieveAllCategoriesByUser(uid);
+    }
+    @PostMapping("create/user/{uid}")
+    public ResponseEntity<String> createCategory(@RequestBody CategoryRequestDTO categoryRequestDTO
+            ,@PathVariable long uid){
+        return categoryServices.createCategory(categoryRequestDTO,uid);
     }
     @PutMapping("update/{id}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable long id

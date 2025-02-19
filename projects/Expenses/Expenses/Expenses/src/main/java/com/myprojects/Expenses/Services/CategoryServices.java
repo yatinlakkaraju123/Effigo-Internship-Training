@@ -24,6 +24,8 @@ public class CategoryServices {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private ExpenseRepository expenseRepository;
     
     @Autowired
@@ -58,14 +60,31 @@ public class CategoryServices {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    public ResponseEntity<String> createCategory(CategoryRequestDTO categoryRequestDTO){
+    public ResponseEntity<List<CategoryResponseDTO>> retrieveAllCategoriesByUser(long uid){
+        try{
+            Optional<Users> user = userRepository.findById(uid);
+            if(user.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            List<Category> categories = categoryRepository.retrieveByUser(uid);
+            List<CategoryResponseDTO> categoryResponseDTOS = categories.stream().map(
+                     category -> categoryMappers.CategoryToCategoryResponse(category)
+            ).toList();
+            return new ResponseEntity<>(categoryResponseDTOS,HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    public ResponseEntity<String> createCategory(CategoryRequestDTO categoryRequestDTO,long uid){
         try {
-            if(categoryRepository.existsByName(categoryRequestDTO.getName()))
+            if(categoryRepository.existsByNameAndUserId(categoryRequestDTO.getName(),uid))
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             Category category = categoryMappers.CategoryRequestToCategory(categoryRequestDTO);
-
-
+            Optional<Users> user = userRepository.findById(uid);
+            if(user.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            category.setUser(user.get());
             // Save the user first to generate the ID
 
 
@@ -91,6 +110,7 @@ public class CategoryServices {
             }
             else{
                 category.get().setName(requestedCategory.getName());
+                categoryRepository.save(category.get());
                 return new ResponseEntity<>(categoryMappers
                         .CategoryToCategoryResponse(category.get()),HttpStatus.ACCEPTED);
             }
@@ -111,6 +131,7 @@ public class CategoryServices {
                 expense.setUser(null);
                 expenseRepository.delete(expense);
             }
+            category.get().setUser(null);
             categoryRepository.delete(category.get());
             return new ResponseEntity<>("category deleted",HttpStatus.OK);
         } catch (Exception e) {

@@ -24,5 +24,7 @@ public class Users {
     private List<Authorities> authoritiesList = new ArrayList<>();
     @OneToMany(mappedBy = "user")
     private List<Expenses> expenses = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<Category> categories = new ArrayList<>();
 
 }

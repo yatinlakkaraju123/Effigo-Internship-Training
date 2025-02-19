@@ -1,0 +1,28 @@
+/* Navbar Link Hover Effect */
+.navbar-nav .nav-link:hover {
+    color: blue !important;
+  }
+  
+  /* Improved Logout Button */
+  .navbar-nav .btn-danger {
+    background-color: #c82333 !important;
+    color: white !important;
+  }
+  .navbar-nav .btn-danger:hover {
+    color: white !important;  /* Ensures text stays white */
+}
+  .navbar-nav .btn-danger:hover {
+    background-color: #8a0a17 !important;
+  }
+  
+    /* Improved Login Button */
+    .navbar-nav .btn-primary {
+        background-color: #0056b3 !important;
+        color: white !important;
+      }
+  /* Improved Login Button */
+  .navbar-nav .btn-primary:hover {
+    background-color: #043971 !important;
+    color: white !important;
+  }
+  
